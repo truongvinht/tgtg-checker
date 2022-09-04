@@ -69,7 +69,7 @@ class TgtgService {
             this.requestItem(itemId, accessToken, refreshToken, callback);
 
             // 15 sec delay
-            await new Promise(resolve => setTimeout(resolve, 15000));
+            await new Promise(resolve => setTimeout(resolve, 12000));
             console.log(`Waited for ${itemId}`);
         }
     }
