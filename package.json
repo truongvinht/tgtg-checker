@@ -1,0 +1,33 @@
+{
+  "name": "tgtg-checker",
+  "version": "1.0.0",
+  "description": "Backend Checker for specific items",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/truongvinht/tgtg-checker.git"
+  },
+  "keywords": [
+    "tgtg"
+  ],
+  "engines": {
+    "node": "16.x"
+  },
+  "author": "Truong Vinh Tran",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/truongvinht/tgtg-checker/issues"
+  },
+  "homepage": "https://github.com/truongvinht/tgtg-checker#readme",
+  "dependencies": {
+    "dotenv": "^16.0.2",
+    "http": "^0.0.1-security",
+    "pushover-notifications": "^1.2.2",
+    "request": "^2.88.2",
+    "toad-scheduler": "^1.6.1"
+  }
+}

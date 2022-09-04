@@ -1,0 +1,7 @@
+{
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+        "node_modules"
+    ],
+    "coverageDirectory": "<rootDir>/coverage/"
+}
