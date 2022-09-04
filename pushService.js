@@ -38,7 +38,8 @@ class ApiPushService {
             message: message,
             title: title,
             sound: 'magic',
-            priority: 1
+            device: 'iDevice',
+            priority: 2
         };
 
         this.push.send(msg, callback);

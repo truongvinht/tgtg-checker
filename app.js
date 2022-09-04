@@ -22,24 +22,44 @@ function getPushService () {
     return pushService;
 }
 
-function checkItemForPush (itemResp) {
+function pushItem(item) {
     const pushCallback = function (err, result) {
         if (err) {
             throw err;
         }
         console.log(result);
     };
+    let pickupTime = '';
+
+    if (Object.prototype.hasOwnProperty.call(item, 'pickup_interval')) {
+        if (Object.prototype.hasOwnProperty.call(item.pickup_interval, 'start')&&
+        Object.prototype.hasOwnProperty.call(item.pickup_interval, 'end')) {
+            pickupTime = `[${item.pickup_interval.start} - ${item.pickup_interval.end}]`;
+        }
+    }
+
+    let rating = '';
+    if (Object.prototype.hasOwnProperty.call(item, 'average_overall_rating')) {
+        if (Object.prototype.hasOwnProperty.call(item.average_overall_rating, 'average_overall_rating')) {
+            pickupTime = `[Rating ${item.average_overall_rating.average_overall_rating}]`;
+        }
+    }
+
+    getPushService().pushNotification(item.display_name, `Anzahl Verfügbar: ${item.items_available} ${pickupTime} ${rating}`, pushCallback);
+}
+
+function checkItemForPush (itemResp) {
 
     if (Object.prototype.hasOwnProperty.call(reqMap, itemResp.item_id)) {
         if (itemResp.items_available > 0 && reqMap[`${itemResp.item_id}`] < itemResp.items_available) {
-            getPushService().pushNotification(itemResp.display_name, `Anzahl Verfügbar: ${itemResp.items_available}`, pushCallback);
+            pushItem(itemResp);
         } else {
             console.log(`${itemResp.display_name} - Count ${itemResp.items_available}`);
         }
     } else {
         if (itemResp.items_available > 0) {
             // first call and item is available
-            getPushService().pushNotification(itemResp.display_name, `Anzahl Verfügbar: ${itemResp.items_available}`, pushCallback);
+            pushItem(itemResp);
         } else {
             // first call and not available
             console.log(`${itemResp.display_name} not available`);
@@ -50,20 +70,30 @@ function checkItemForPush (itemResp) {
 }
 
 const task = new Task('simple task', () => {
-    console.log('Trigger TGTG ' + process.env.REQ_TIMER);
-    console.log(new Date());
 
-    const callback = function (item, err) {
-        if (err == null) {
-            checkItemForPush(item);
-        } else {
-            console.log('bad request ' + err)
-        }
-    };
+    // only check bwetween 6-22
+    const date = new Date();
 
-    // check item
-    tgtg.checkItem('',callback);
+    // GMT+2
+    const hour = date.getHours() + 2;
+
+    if (hour > 6 && hour < 22) {
+    
+        const callback = function (item, err) {
+            if (err == null) {
+                checkItemForPush(item);
+            } else {
+                console.log('bad request ' + err)
+            }
+        };
+    
+        // check item
+        const LIST = JSON.parse(process.env.ITEMS);
+        tgtg.checkItems(LIST,callback);
+    }
 });
+
+
 
 const job1 = new SimpleIntervalJob(
     { seconds: process.env.REQ_TIMER, runImmediately: true },
