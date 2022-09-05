@@ -68,6 +68,7 @@ function checkItemForPush (itemResp) {
     }
     // save counter
     reqMap[`${itemResp.item_id}`] = itemResp.items_available;
+    console.log(reqMap);
 }
 
 const task = new Task('simple task', () => {
