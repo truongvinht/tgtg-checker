@@ -50,29 +50,24 @@ function pushItem(item) {
 }
 
 function checkItemForPush (itemResp) {
-
-    if (itemResp.item_id === undefined) {
-        console.log('checkItemForPush: ' + itemResp);
-    } else {
-        if (Object.prototype.hasOwnProperty.call(reqMap, itemResp.item_id)) {
-            if (itemResp.items_available > 0 && reqMap[`${itemResp.item_id}`] < itemResp.items_available) {
-                pushItem(itemResp);
-            } else {
-                console.log(`${itemResp.display_name} - Count ${itemResp.items_available}`);
-            }
+    if (Object.prototype.hasOwnProperty.call(reqMap, itemResp.item.item_id)) {
+        if (itemResp.items_available > 0 && reqMap[itemResp.item.item_id] < itemResp.items_available) {
+            pushItem(itemResp);
         } else {
-            if (itemResp.items_available > 0) {
-                // first call and item is available
-                pushItem(itemResp);
-            } else {
-                // first call and not available
-                console.log(`${itemResp.display_name} not available`);
-            }
+            console.log(`${itemResp.display_name} - Count ${itemResp.items_available}`);
         }
-        // save counter
-        reqMap[itemResp.item_id] = itemResp.items_available;
-        console.log(reqMap);
+    } else {
+        if (itemResp.items_available > 0) {
+            // first call and item is available
+            pushItem(itemResp);
+        } else {
+            // first call and not available
+            console.log(`${itemResp.display_name} not available`);
+        }
     }
+    // save counter
+    reqMap[itemResp.item.item_id] = itemResp.items_available;
+    console.log(reqMap);
 }
 
 const task = new Task('simple task', () => {
