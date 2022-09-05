@@ -14,6 +14,7 @@ const PushService = require('./pushService');
 
 
 let reqMap = {};
+let pushService = null;
 
 function getPushService () {
     if (pushService == null) {
