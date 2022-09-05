@@ -35,7 +35,11 @@ function pushItem(item) {
     if (Object.prototype.hasOwnProperty.call(item, 'pickup_interval')) {
         if (Object.prototype.hasOwnProperty.call(item.pickup_interval, 'start')&&
         Object.prototype.hasOwnProperty.call(item.pickup_interval, 'end')) {
-            pickupTime = `[${item.pickup_interval.start} - ${item.pickup_interval.end}]`;
+            let startTime = item.pickup_interval.start;
+            let startDate =  new Date(startTime);
+            let endTime = item.pickup_interval.end;
+            let endDate =  new Date(endTime);
+            pickupTime = `[${startDate.toLocaleString("de-DE")} - ${endDate.toLocaleString("de-DE")}]`;
         }
     }
 
