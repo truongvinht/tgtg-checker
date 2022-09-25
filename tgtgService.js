@@ -36,6 +36,21 @@ class TgtgService {
         this.apiService.apiRefresh(apiCallback, this.accessToken, this.refreshToken, this.userId);
     }
 
+    checkfavorites (callback) {
+        const service = this;
+        const apiCallback = function (resp, err) {
+            if (err === null) {
+                console.log('favorites#apiRefresh');
+                const accessToken = resp.access_token;
+                const refreshToken = resp.refresh_token;
+                service.apiService.favorites(callback, accessToken, service.userId);
+            } else {
+                console.log('favorites#apiRefresh: Failed');
+            }
+        };
+        this.apiService.apiRefresh(apiCallback, this.accessToken, this.refreshToken, this.userId);
+    }
+
     checkItems(itemIds, callback) {
         const service = this;
         const apiCallback = function (resp, err) {

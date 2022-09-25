@@ -1,6 +1,6 @@
 {
   "name": "tgtg-checker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Backend Checker for specific items",
   "main": "app.js",
   "scripts": {
@@ -25,7 +25,6 @@
   "homepage": "https://github.com/truongvinht/tgtg-checker#readme",
   "dependencies": {
     "dotenv": "^16.0.2",
-    "https": "^1.0.0",
     "pushover-notifications": "^1.2.2",
     "request": "^2.88.2",
     "toad-scheduler": "^1.6.1"

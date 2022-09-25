@@ -4,7 +4,6 @@
 
 // import
 const request = require('request');
-const https = require('https');
 
 const USER_AGENT = 'TGTG/{} Dalvik/2.1.0 (Linux; U; Android 10; SM-G935F Build/NRD90M)';
 const CONTENT_TYPE = 'application/json';
@@ -19,15 +18,11 @@ class TgtgApiService {
      */
     constructor() {
         this.url = 'https://apptoogoodtogo.com';
-        this.port = '80';
-
-        this.httpRequest = https;
     }
 
     apiRefresh(callback, accessToken, refreshToken, userId) {
         const PATH = '/api/auth/v3/token/refresh';
-        console.log('access: ' + accessToken);
-        console.log('refresh: ' + refreshToken);
+        console.log('refresh tokens');
         this.postRequest(callback, PATH, { 'User-Agent': USER_AGENT, 'Content-Type': CONTENT_TYPE }, {
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -51,23 +46,26 @@ class TgtgApiService {
     }
 
     // not working yet
-    favorites(callback, accessToken, refreshToken, userId) {
+    favorites(callback, accessToken, userId) {
         const PATH = '/api/item/v7/';
 
         const body = {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            user_id: userId,
-            origin: { latitude: 0, longitude: 0 },
             favorites_only: true,
-            page_size: 20,
-            page: 1
+            user_id: userId,
+            origin: {
+              latitude: 0,
+              longitude: 0,
+            },
+            radius: 200,
         };
 
         this.postRequest(callback, PATH, {
-            'User-Agent': USER_AGENT,
-            Authorization: `Bearer ${refreshToken}`,
-            'Content-Type': CONTENT_TYPE
+            'user-agent': USER_AGENT,
+            "Content-Type": "application/json",
+            Accept: "",
+            "Accept-Language": "en-US",
+            "Accept-Encoding": "gzip",
+            Authorization: `Bearer ${accessToken}`
         }, body);
     }
 
