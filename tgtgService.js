@@ -4,6 +4,9 @@
 
 const ApiService = require('./tgtgApiService');
 
+// 9 seconds
+const DELAY = 9000;
+
 class TgtgService {
     /**
      * Constructor for initializing Service
@@ -28,6 +31,8 @@ class TgtgService {
                 console.log('checkItem#apiRefresh');
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
+                console.log('checkItem#acc: '+ accessToken);
+                console.log('checkItem#refresh:' + refreshToken);
                 service.requestItem(itemId, accessToken, refreshToken, callback);
             } else {
                 console.log('checkItem#apiRefresh: Failed');
@@ -59,6 +64,8 @@ class TgtgService {
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
 
+                console.log('checkItem#acc: '+ accessToken);
+                console.log('checkItem#refresh:' + refreshToken);
                 // request every item
 
                 //service.requestItem(itemId, accessToken, refreshToken, callback);
@@ -83,8 +90,8 @@ class TgtgService {
             console.log(`Fetch ${itemId}`);
             this.requestItem(itemId, accessToken, refreshToken, callback);
 
-            // 15 sec delay
-            await new Promise(resolve => setTimeout(resolve, 12000));
+            // x sec delay
+            await new Promise(resolve => setTimeout(resolve, DELAY));
             console.log(`Waited for ${itemId}`);
         }
     }
