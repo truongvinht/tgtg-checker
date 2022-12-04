@@ -5,7 +5,7 @@
 const ApiService = require('./tgtgApiService');
 
 // 9 seconds
-const DELAY = 9000;
+const DELAY = 8000;
 
 class TgtgService {
     /**
