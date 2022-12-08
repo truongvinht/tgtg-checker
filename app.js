@@ -54,6 +54,12 @@ function pushItem(item) {
 }
 
 function checkItemForPush (itemResp) {
+
+    if (!Object.prototype.hasOwnProperty.call(itemResp.item, 'item_id')) {
+        getPushService().pushNotification('Error', ''+itemResp.item);
+        return;
+    }
+
     if (Object.prototype.hasOwnProperty.call(reqMap, itemResp.item.item_id)) {
         if (itemResp.items_available > 0 && reqMap[itemResp.item.item_id] < itemResp.items_available) {
             pushItem(itemResp);
