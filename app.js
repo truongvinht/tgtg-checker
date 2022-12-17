@@ -55,6 +55,12 @@ function pushItem(item) {
 
 function checkItemForPush (itemResp) {
 
+    // prevent aborting
+    if (itemResp === null || itemResp === undefined) {
+        getPushService().pushNotification('Error', ''+itemResp);
+        return;
+    }
+
     if (!Object.prototype.hasOwnProperty.call(itemResp.item, 'item_id')) {
         getPushService().pushNotification('Error', ''+itemResp.item);
         return;
@@ -77,7 +83,7 @@ function checkItemForPush (itemResp) {
     }
     // save counter
     reqMap[itemResp.item.item_id] = itemResp.items_available;
-    console.log(reqMap);
+    //console.log(reqMap);
 }
 
 const task = new Task('simple task', () => {

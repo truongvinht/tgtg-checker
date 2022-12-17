@@ -28,11 +28,8 @@ class TgtgService {
         const service = this;
         const apiCallback = function (resp, err) {
             if (err === null) {
-                console.log('checkItem#apiRefresh');
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
-                console.log('checkItem#acc: '+ accessToken);
-                console.log('checkItem#refresh:' + refreshToken);
                 service.requestItem(itemId, accessToken, refreshToken, callback);
             } else {
                 console.log('checkItem#apiRefresh: Failed');
@@ -45,7 +42,6 @@ class TgtgService {
         const service = this;
         const apiCallback = function (resp, err) {
             if (err === null) {
-                console.log('favorites#apiRefresh');
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
                 service.apiService.favorites(callback, accessToken, service.userId);
@@ -60,15 +56,9 @@ class TgtgService {
         const service = this;
         const apiCallback = function (resp, err) {
             if (err === null) {
-                console.log('checkItem#apiRefresh');
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
-
-                console.log('checkItem#acc: '+ accessToken);
-                console.log('checkItem#refresh:' + refreshToken);
                 // request every item
-
-                //service.requestItem(itemId, accessToken, refreshToken, callback);
                 service.requestWithDelay(itemIds, accessToken, refreshToken, callback);
             } else {
                 console.log('checkItem#apiRefresh: Failed');
@@ -92,7 +82,6 @@ class TgtgService {
 
             // x sec delay
             await new Promise(resolve => setTimeout(resolve, DELAY));
-            console.log(`Waited for ${itemId}`);
         }
     }
     

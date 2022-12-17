@@ -22,9 +22,10 @@ class TgtgApiService {
 
     apiRefresh(callback, accessToken, refreshToken, userId) {
         const PATH = '/api/auth/v3/token/refresh';
-        console.log('#### refresh tokens ####');
+        console.log('#############################')
         console.log('access-Token: ' + accessToken);
         console.log('refresh-Token: ' + refreshToken);
+        console.log('#############################')
         this.postRequest(callback, PATH, { 'User-Agent': USER_AGENT, 'Content-Type': CONTENT_TYPE }, {
             access_token: accessToken,
             refresh_token: refreshToken,
