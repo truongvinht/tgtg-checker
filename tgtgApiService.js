@@ -73,7 +73,7 @@ class TgtgApiService {
     }
 
     postRequest(callback, path, headers, body) {
-        console.log(this.url + path);
+        //console.log(this.url + path);
 
         const options = {
             method: 'POST',
