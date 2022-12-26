@@ -27,7 +27,7 @@ class TgtgService {
     checkItem(itemId, callback) {
         const service = this;
         const apiCallback = function (resp, err) {
-            if (err === null) {
+            if (err == null) {
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
                 service.requestItem(itemId, accessToken, refreshToken, callback);
@@ -41,7 +41,7 @@ class TgtgService {
     checkfavorites (callback) {
         const service = this;
         const apiCallback = function (resp, err) {
-            if (err === null) {
+            if (err == null) {
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
                 service.apiService.favorites(callback, accessToken, service.userId);
@@ -55,7 +55,7 @@ class TgtgService {
     checkItems(itemIds, callback) {
         const service = this;
         const apiCallback = function (resp, err) {
-            if (err === null) {
+            if (err == null) {
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
                 // request every item
@@ -77,7 +77,6 @@ class TgtgService {
 
     async requestWithDelay (itemIds, accessToken, refreshToken, callback) {
         for (const itemId of itemIds) {
-            console.log(`Fetch ${itemId}`);
             this.requestItem(itemId, accessToken, refreshToken, callback);
 
             // x sec delay

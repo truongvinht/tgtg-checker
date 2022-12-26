@@ -55,35 +55,36 @@ function pushItem(item) {
 
 function checkItemForPush (itemResp) {
 
+    const response = itemResp;
+
     // prevent aborting
-    if (itemResp === null || itemResp === undefined) {
-        getPushService().pushNotification('Error', ''+itemResp);
+    if (response == null || response === undefined) {
+        getPushService().pushNotification('Error', ''+response);
         return;
     }
 
-    if (!Object.prototype.hasOwnProperty.call(itemResp.item, 'item_id')) {
-        getPushService().pushNotification('Error', ''+itemResp.item);
+    if (!Object.prototype.hasOwnProperty.call(response.item, 'item_id')) {
+        getPushService().pushNotification('Error', ''+response.item);
         return;
     }
 
-    if (Object.prototype.hasOwnProperty.call(reqMap, itemResp.item.item_id)) {
-        if (itemResp.items_available > 0 && reqMap[itemResp.item.item_id] < itemResp.items_available) {
-            pushItem(itemResp);
+    if (Object.prototype.hasOwnProperty.call(reqMap, response.item.item_id)) {
+        if (response.items_available > 0 && reqMap[response.item.item_id] < response.items_available) {
+            pushItem(response);
         } else {
-            console.log(`${itemResp.display_name} - Count ${itemResp.items_available}`);
+            console.log(`${response.item.item_id}: ${response.display_name} - Count ${response.items_available}`);
         }
     } else {
-        if (itemResp.items_available > 0) {
+        if (response.items_available > 0) {
             // first call and item is available
-            pushItem(itemResp);
+            pushItem(response);
         } else {
             // first call and not available
-            console.log(`${itemResp.display_name} not available`);
+            console.log(`${response.item.item_id}: ${response.display_name} not available`);
         }
     }
     // save counter
-    reqMap[itemResp.item.item_id] = itemResp.items_available;
-    //console.log(reqMap);
+    reqMap[response.item.item_id] = response.items_available;
 }
 
 const task = new Task('simple task', () => {
