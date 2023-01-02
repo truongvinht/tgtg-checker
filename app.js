@@ -63,6 +63,12 @@ function checkItemForPush (itemResp) {
         return;
     }
 
+
+    if (!Object.prototype.hasOwnProperty.call(response, 'item_')) {
+        getPushService().pushNotification('Error', ''+response);
+        return;
+    }
+
     if (!Object.prototype.hasOwnProperty.call(response.item, 'item_id')) {
         getPushService().pushNotification('Error', ''+response.item);
         return;
