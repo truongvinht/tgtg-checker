@@ -59,18 +59,18 @@ function checkItemForPush (itemResp) {
 
     // prevent aborting
     if (response == null || response === undefined) {
-        getPushService().pushNotification('Error', ''+response);
+        getPushService().pushNotification('Error fetching response', ''+response);
         return;
     }
 
 
-    if (!Object.prototype.hasOwnProperty.call(response, 'item_')) {
-        getPushService().pushNotification('Error', ''+response);
+    if (!Object.prototype.hasOwnProperty.call(response, 'item')) {
+        getPushService().pushNotification('Error fetching response.item', JSON.stringify(response));
         return;
     }
 
     if (!Object.prototype.hasOwnProperty.call(response.item, 'item_id')) {
-        getPushService().pushNotification('Error', ''+response.item);
+        getPushService().pushNotification('Error fetching item_id', ''+JSON.stringify(response.item));
         return;
     }
 
