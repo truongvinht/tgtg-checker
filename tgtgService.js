@@ -98,10 +98,16 @@ class TgtgService {
         const service = this;
 
         const apiCallback = function (resp, err) {
-            // estimate expire date (1 days buffer)
-            service.tokenExpireDate = Math.floor(Date.now() / 1000) + resp.access_token_ttl_seconds - (60*60*24);
-            service.cachedAccessToken = resp.access_token;
-            callback(resp, err);
+
+            if (err==null) {
+                // estimate expire date (1 days buffer)
+                service.tokenExpireDate = Math.floor(Date.now() / 1000) + resp.access_token_ttl_seconds - (60*60*24);
+                service.cachedAccessToken = resp.access_token;
+                callback(resp, err);
+            } else {
+                // req failed
+                callback(null, err);
+            }
         };
         if (this.tokenExpireDate === undefined) {
             // first fetch

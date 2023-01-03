@@ -14,6 +14,7 @@ const PushService = require('./pushService');
 
 
 let reqMap = {};
+let didNotifyError = false;
 let pushService = null;
 
 function getPushService () {
@@ -75,19 +76,31 @@ function checkItemForPush (itemResp) {
 
     // prevent aborting
     if (response == null || response === undefined) {
-        getPushService().pushNotification('Error fetching response', ''+response);
+        if (!didNotifyError) {
+            didNotifyError = true;
+            getPushService().pushNotification('Error fetching response', ''+response);
+        }
         return;
     }
 
     if (!Object.prototype.hasOwnProperty.call(response, 'item')) {
-        getPushService().pushNotification('Error fetching response.item', JSON.stringify(response));
+        if (!didNotifyError) {
+            didNotifyError = true;
+            getPushService().pushNotification('Error fetching response.item', JSON.stringify(response));
+        }
         return;
     }
 
     if (!Object.prototype.hasOwnProperty.call(response.item, 'item_id')) {
-        getPushService().pushNotification('Error fetching item_id', ''+JSON.stringify(response.item));
+        if (!didNotifyError) {
+            didNotifyError = true;
+            getPushService().pushNotification('Error fetching item_id', ''+JSON.stringify(response.item));
+        }
         return;
     }
+
+    // request was valid
+    didNotifyError = false;
 
     if (Object.prototype.hasOwnProperty.call(reqMap, response.item.item_id)) {
         if (response.items_available > 0 && reqMap[response.item.item_id] < response.items_available) {
@@ -114,7 +127,7 @@ const task = new Task('simple task', () => {
     const date = new Date();
 
     // GMT+2
-    const hour = date.getHours() + 2;
+    const hour = date.getUTCHours() + 1;
 
     if (hour > 6 && hour < 22) {
     
