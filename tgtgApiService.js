@@ -20,20 +20,18 @@ class TgtgApiService {
         this.url = 'https://apptoogoodtogo.com';
     }
 
-    apiRefresh(callback, accessToken, refreshToken, userId) {
+    apiRefresh(callback, refreshToken, userId) {
         const PATH = '/api/auth/v3/token/refresh';
         console.log('#############################')
-        console.log('access-Token: ' + accessToken);
         console.log('refresh-Token: ' + refreshToken);
         console.log('#############################')
         this.postRequest(callback, PATH, { 'User-Agent': USER_AGENT, 'Content-Type': CONTENT_TYPE }, {
-            access_token: accessToken,
             refresh_token: refreshToken,
             user_id: userId
         });
     }
 
-    getItem(callback, itemId, accessToken, refreshToken, userId) {
+    getItem(callback, itemId, accessToken, userId) {
         const PATH = '/api/item/v7/' + itemId;
         this.postRequest(callback, PATH, {
             'User-Agent': USER_AGENT,
@@ -41,8 +39,6 @@ class TgtgApiService {
             'Accept-Language': 'en-UK',
             Authorization: `Bearer ${accessToken}`
         }, {
-            access_token: accessToken,
-            refresh_token: refreshToken,
             user_id: userId,
             origin: null
         });
@@ -76,7 +72,7 @@ class TgtgApiService {
 
         const options = {
             method: 'POST',
-            url: this.url + path,
+            url: `${this.url}${path}`,
             headers: headers,
             body: body,
             json: true

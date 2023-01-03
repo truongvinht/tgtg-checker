@@ -29,13 +29,13 @@ class TgtgService {
         const apiCallback = function (resp, err) {
             if (err == null) {
                 const accessToken = resp.access_token;
-                const refreshToken = resp.refresh_token;
-                service.requestItem(itemId, accessToken, refreshToken, callback);
+                refreshToken = resp.refresh_token;
+                service.requestItem(itemId, accessToken, callback);
             } else {
                 console.log('checkItem#apiRefresh: Failed');
             }
         };
-        this.apiService.apiRefresh(apiCallback, this.accessToken, this.refreshToken, this.userId);
+        this.apiService.apiRefresh(apiCallback, this.refreshToken, this.userId);
     }
 
     checkfavorites (callback) {
@@ -49,7 +49,7 @@ class TgtgService {
                 console.log('favorites#apiRefresh: Failed');
             }
         };
-        this.apiService.apiRefresh(apiCallback, this.accessToken, this.refreshToken, this.userId);
+        this.apiService.apiRefresh(apiCallback, this.refreshToken, this.userId);
     }
 
     checkItems(itemIds, callback) {
@@ -59,25 +59,25 @@ class TgtgService {
                 const accessToken = resp.access_token;
                 const refreshToken = resp.refresh_token;
                 // request every item
-                service.requestWithDelay(itemIds, accessToken, refreshToken, callback);
+                service.requestWithDelay(itemIds, accessToken, callback);
             } else {
                 console.log('checkItem#apiRefresh: Failed');
             }
         };
-        this.apiService.apiRefresh(apiCallback, this.accessToken, this.refreshToken, this.userId);
+        this.apiService.apiRefresh(apiCallback, this.refreshToken, this.userId);
     }
 
-    requestItem (itemId, accessToken, refreshToken, callback) {
+    requestItem (itemId, accessToken, callback) {
         const favCallback = function (itemResp, itemErr) {
             callback(itemResp, itemErr);
         };
     
-        this.apiService.getItem(favCallback, itemId, accessToken, refreshToken, this.userId);
+        this.apiService.getItem(favCallback, itemId, accessToken,  this.userId);
     }
 
-    async requestWithDelay (itemIds, accessToken, refreshToken, callback) {
+    async requestWithDelay (itemIds, accessToken, callback) {
         for (const itemId of itemIds) {
-            this.requestItem(itemId, accessToken, refreshToken, callback);
+            this.requestItem(itemId, accessToken, callback);
 
             // x sec delay
             await new Promise(resolve => setTimeout(resolve, DELAY));

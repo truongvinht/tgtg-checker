@@ -63,7 +63,6 @@ function checkItemForPush (itemResp) {
         return;
     }
 
-
     if (!Object.prototype.hasOwnProperty.call(response, 'item')) {
         getPushService().pushNotification('Error fetching response.item', JSON.stringify(response));
         return;
