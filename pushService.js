@@ -38,7 +38,7 @@ class ApiPushService {
             message: message,
             title: title,
             sound: 'magic',
-            priority: 1
+            priority: 0
         };
 
         this.push.send(msg, callback);
