@@ -6,13 +6,12 @@ In order to run the tgtg service, following env are required.
 
 | Variable | Example | Description  |
 | ------------- |:-------------:| -----:|
-| TGTG_ACCESS_TOKEN | e30.xxxxxxxxxxx | Access token from tgtg to access api |
 | TGTG_REFRESH_TOKEN | e30.xxxxxxxxxxx | Token for getting new tokens |
 | TGTG_User | 123456789    | tgtg account id (only digits)|
 | PO_USER | xxxxxxxxxxx | user id for Pushover service |
 | PO_TOKEN | zzzzzzzzzzz | token for Pushover service |
-| REQ_TIMER | 60 | Repeat every 60 seconds |
-| ITEMS | ["298070","123456"] | List of item id which will be checked |
+| REQ_TIMER | 60 | Repeat requesting every 60 seconds |
+| ITEMS | ["298070","123456"] | List of item id which will be checked, if list is empty favorites will be used |
 
 ## Hint
 Too frequent access of the api might getting banned. So try to keep it low (e.g. 1 req per 8 seconds). 
