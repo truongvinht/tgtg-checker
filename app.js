@@ -39,18 +39,34 @@ function pushItem(item) {
             let startDate =  new Date(startTime);
             let endTime = item.pickup_interval.end;
             let endDate =  new Date(endTime);
-            pickupTime = `[${startDate.toLocaleString("de-DE")} - ${endDate.toLocaleString("de-DE")}]`;
+
+            const pickDate = startDate.toLocaleDateString("de-DE");
+
+            const options = {
+                hour: '2-digit',
+                minute: '2-digit'
+            }
+
+            const pickStart = startDate.toLocaleTimeString("de-DE", options);
+            const pickEnd = endDate.toLocaleTimeString("de-DE",options);
+            
+            pickupTime = `${pickDate}\n${pickStart} - ${pickEnd}`;
         }
     }
 
     let rating = '';
-    if (Object.prototype.hasOwnProperty.call(item, 'average_overall_rating')) {
-        if (Object.prototype.hasOwnProperty.call(item.average_overall_rating, 'average_overall_rating')) {
-            pickupTime = `[Rating ${item.average_overall_rating.average_overall_rating}]`;
+    if (Object.prototype.hasOwnProperty.call(item, 'item')) {
+        if (Object.prototype.hasOwnProperty.call(item.item, 'average_overall_rating')) {
+            if (Object.prototype.hasOwnProperty.call(item.item.average_overall_rating, 'average_overall_rating')) {
+                const avg = item.item.average_overall_rating.average_overall_rating;
+                if (avg != null && avg !== undefined) {
+                    rating = `(⭐️${avg.toFixed(2)})`;
+                }
+            }
         }
     }
-
-    getPushService().pushNotification(item.display_name, `Anzahl Verfügbar: ${item.items_available} ${pickupTime} ${rating}`, pushCallback);
+    //console.log(`Anzahl: ${item.items_available} ${rating} \n${pickupTime}`);
+    getPushService().pushNotification(item.display_name, `Anzahl: ${item.items_available} ${rating} \n${pickupTime}`, pushCallback);
 }
 
 function checkItemForPush (itemResp) {
