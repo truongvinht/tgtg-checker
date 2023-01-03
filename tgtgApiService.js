@@ -18,6 +18,7 @@ class TgtgApiService {
      */
     constructor() {
         this.url = 'https://apptoogoodtogo.com';
+        this.cookie = undefined;
     }
 
     apiRefresh(callback, refreshToken, userId) {
@@ -58,15 +59,13 @@ class TgtgApiService {
               latitude: 0,
               longitude: 0,
             },
-            radius: 200,
+            page_size: 20,
+            page: 1
         };
 
         this.postRequest(callback, PATH, {
             'user-agent': USER_AGENT,
-            "Content-Type": "application/json",
-            Accept: "",
-            "Accept-Language": "en-US",
-            "Accept-Encoding": "gzip",
+            'Cookie':this.cookie,
             Authorization: `Bearer ${accessToken}`
         }, body);
     }
@@ -81,8 +80,19 @@ class TgtgApiService {
             json: true
         };
 
+        const api = this;
+
         request(options, function (error, response, body) {
             if (error) throw new Error(error);
+            //console.log(JSON.stringify(response))
+
+            // look for cookie, and store it
+            if(Object.prototype.hasOwnProperty.call(response.headers, 'set-cookie')) {
+                if (response.headers['set-cookie'].length > 0) {
+                    api.cookie = response.headers['set-cookie'][0];
+                }
+            }
+
             callback(body, error);
         });
     }

@@ -44,7 +44,21 @@ class TgtgService {
         const service = this;
         const apiCallback = function (resp, err) {
             if (err == null) {
-                service.apiService.favorites(callback, resp.access_token, service.userId);
+                const favCallback = (favResp, favErr) => {
+                    if (favErr == null) {
+                        if (Object.prototype.hasOwnProperty.call(favResp, 'items')) {
+                            for (const item of favResp.items) {
+                                callback(item, null);
+                            }
+                        } else {
+                            console.log('favorites#checkFavorites: Bad Result ' + JSON.stringify(favResp));
+                        }
+                    } else {
+                        callback(null, favErr);
+                    }
+                };
+
+                service.apiService.favorites(favCallback, resp.access_token, service.userId);
             } else {
                 console.log('favorites#apiRefresh: Failed');
             }
@@ -66,11 +80,11 @@ class TgtgService {
     }
 
     requestItem (itemId, accessToken, callback) {
-        const favCallback = function (itemResp, itemErr) {
+        const itemCallback = function (itemResp, itemErr) {
             callback(itemResp, itemErr);
         };
     
-        this.apiService.getItem(favCallback, itemId, accessToken,  this.userId);
+        this.apiService.getItem(itemCallback, itemId, accessToken,  this.userId);
     }
 
     /**

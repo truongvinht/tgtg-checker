@@ -102,17 +102,29 @@ const task = new Task('simple task', () => {
 
     if (hour > 6 && hour < 22) {
     
-        const callback = function (item, err) {
-            if (err == null) {
-                checkItemForPush(item);
-            } else {
-                console.log('bad request ' + err)
-            }
-        };
-    
-        // check item
         const LIST = JSON.parse(process.env.ITEMS);
-        tgtg.checkItems(LIST,callback);
+        if (LIST.length > 0) {
+            const callback = function (item, err) {
+                if (err == null) {
+                    checkItemForPush(item);
+                } else {
+                    console.log('bad request ' + err)
+                }
+            };
+            // check item
+            tgtg.checkItems(LIST,callback);
+        } else {
+            // req all items from favorites
+            const callback = function (favItem, err) {
+                if (err == null) {
+                    checkItemForPush(favItem);
+                } else {
+                    console.log(JSON.stringify(err));
+                }
+            }
+            
+            tgtg.checkfavorites(callback);
+        }
     }
 });
 
