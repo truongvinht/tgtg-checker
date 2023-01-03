@@ -25,14 +25,17 @@ class TgtgApiService {
         console.log('#############################')
         console.log('refresh-Token: ' + refreshToken);
         console.log('#############################')
-        this.postRequest(callback, PATH, { 'User-Agent': USER_AGENT, 'Content-Type': CONTENT_TYPE }, {
+        this.postRequest(callback, PATH, { 
+            'User-Agent': USER_AGENT, 
+            'Content-Type': CONTENT_TYPE 
+        }, {
             refresh_token: refreshToken,
             user_id: userId
         });
     }
 
     getItem(callback, itemId, accessToken, userId) {
-        const PATH = '/api/item/v7/' + itemId;
+        const PATH = `/api/item/v7/${itemId}`;
         this.postRequest(callback, PATH, {
             'User-Agent': USER_AGENT,
             'Content-Type': CONTENT_TYPE,

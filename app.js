@@ -8,7 +8,7 @@ const scheduler = new ToadScheduler();
 
 // init service
 const TgtgService = require('./tgtgService');
-const tgtg = new TgtgService(process.env.TGTG_ACCESS_TOKEN,process.env.TGTG_REFRESH_TOKEN,process.env.TGTG_User);
+const tgtg = new TgtgService(process.env.TGTG_REFRESH_TOKEN,process.env.TGTG_User);
 
 const PushService = require('./pushService');
 

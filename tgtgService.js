@@ -11,14 +11,16 @@ class TgtgService {
     /**
      * Constructor for initializing Service
      * @constructor
-     * @param {string} accessToken - TGTG access token
      * @param {string} refreshToken - TGTG refresh token
      * @param {string} userId - TGTG user id
      */
-    constructor(accessToken, refreshToken, userId) {
-        this.accessToken = accessToken;
+    constructor(refreshToken, userId) {
         this.refreshToken = refreshToken;
         this.userId = userId;
+
+        // access token expire date
+        this.tokenExpireDate = undefined;
+        this.cachedAccessToken = undefined;
 
         // init service
         this.apiService = new ApiService();
@@ -29,42 +31,38 @@ class TgtgService {
         const apiCallback = function (resp, err) {
             if (err == null) {
                 const accessToken = resp.access_token;
-                refreshToken = resp.refresh_token;
+                service.refreshToken = resp.refresh_token;
                 service.requestItem(itemId, accessToken, callback);
             } else {
                 console.log('checkItem#apiRefresh: Failed');
             }
         };
-        this.apiService.apiRefresh(apiCallback, this.refreshToken, this.userId);
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
     }
 
     checkfavorites (callback) {
         const service = this;
         const apiCallback = function (resp, err) {
             if (err == null) {
-                const accessToken = resp.access_token;
-                const refreshToken = resp.refresh_token;
-                service.apiService.favorites(callback, accessToken, service.userId);
+                service.apiService.favorites(callback, resp.access_token, service.userId);
             } else {
                 console.log('favorites#apiRefresh: Failed');
             }
         };
-        this.apiService.apiRefresh(apiCallback, this.refreshToken, this.userId);
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
     }
 
     checkItems(itemIds, callback) {
         const service = this;
         const apiCallback = function (resp, err) {
             if (err == null) {
-                const accessToken = resp.access_token;
-                const refreshToken = resp.refresh_token;
                 // request every item
-                service.requestWithDelay(itemIds, accessToken, callback);
+                service.requestWithDelay(itemIds, resp.access_token, callback);
             } else {
                 console.log('checkItem#apiRefresh: Failed');
             }
         };
-        this.apiService.apiRefresh(apiCallback, this.refreshToken, this.userId);
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
     }
 
     requestItem (itemId, accessToken, callback) {
@@ -73,6 +71,42 @@ class TgtgService {
         };
     
         this.apiService.getItem(favCallback, itemId, accessToken,  this.userId);
+    }
+
+    /**
+     * Only request new api token if old one already expired
+     * @param {*} callback 
+     * @param {*} refreshToken 
+     * @param {*} userId 
+     */
+    updateTokenOnDemand(callback, refreshToken, userId) {
+
+        const service = this;
+
+        const apiCallback = function (resp, err) {
+            // estimate expire date (1 days buffer)
+            service.tokenExpireDate = Math.floor(Date.now() / 1000) + resp.access_token_ttl_seconds - (60*60*24);
+            service.cachedAccessToken = resp.access_token;
+            callback(resp, err);
+        };
+        if (this.tokenExpireDate === undefined) {
+            // first fetch
+            this.apiService.apiRefresh(apiCallback, refreshToken, userId);
+        } else {
+            // check whether expire date already occured
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (currentTime < this.tokenExpireDate) {
+                // did not expired, build a resp map
+                const resp = {
+                    'access_token':this.cachedAccessToken
+                };
+                callback(resp, null);
+            } else {
+                // refresh token
+                this.apiService.apiRefresh(apiCallback, refreshToken, userId);
+            }
+        }
+        
     }
 
     async requestWithDelay (itemIds, accessToken, callback) {
