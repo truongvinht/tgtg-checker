@@ -78,6 +78,7 @@ function checkItemForPush (itemResp) {
     if (response == null || response === undefined) {
         if (!didNotifyError) {
             didNotifyError = true;
+            console.log(`${new Date().toLocaleString("de-DE")}| Error fetching response: ${response}`);
             getPushService().pushNotification('Error fetching response', ''+response);
         }
         return;
@@ -86,6 +87,7 @@ function checkItemForPush (itemResp) {
     if (!Object.prototype.hasOwnProperty.call(response, 'item')) {
         if (!didNotifyError) {
             didNotifyError = true;
+            console.log(`${new Date().toLocaleString("de-DE")}| Error fetching response.item: ${JSON.stringify(response)}`);
             getPushService().pushNotification('Error fetching response.item', JSON.stringify(response));
         }
         return;
@@ -94,6 +96,7 @@ function checkItemForPush (itemResp) {
     if (!Object.prototype.hasOwnProperty.call(response.item, 'item_id')) {
         if (!didNotifyError) {
             didNotifyError = true;
+            console.log(`${new Date().toLocaleString("de-DE")}| Error fetching item_id: ${JSON.stringify(response)}`);
             getPushService().pushNotification('Error fetching item_id', ''+JSON.stringify(response.item));
         }
         return;
@@ -106,7 +109,7 @@ function checkItemForPush (itemResp) {
         if (response.items_available > 0 && reqMap[response.item.item_id] < response.items_available) {
             pushItem(response);
         } else {
-            console.log(`${response.item.item_id}: ${response.display_name} - Count ${response.items_available}`);
+            console.log(`${new Date().toLocaleString("de-DE")}| ${response.item.item_id}: ${response.display_name} - Count ${response.items_available}`);
         }
     } else {
         if (response.items_available > 0) {
@@ -114,7 +117,7 @@ function checkItemForPush (itemResp) {
             pushItem(response);
         } else {
             // first call and not available
-            console.log(`${response.item.item_id}: ${response.display_name} not available`);
+            console.log(`${new Date().toLocaleString("de-DE")}| ${response.item.item_id}: ${response.display_name} not available`);
         }
     }
     // save counter
