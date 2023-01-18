@@ -24,6 +24,21 @@ class TgtgService {
 
         // init service
         this.apiService = new ApiService();
+
+        // marker for error retrying
+        this.errorOccured = false;
+    }
+
+    updateTokenOnDemand(callback) {
+        const service = this;
+        const apiCallback = function (resp, err) {
+            if (err == null) {
+                callback(resp, err);
+            } else {
+                console.log('updateTokenOnDemand#apiRefresh: Failed');
+            }
+        };
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
     }
 
     checkItem(itemId, callback) {
@@ -73,7 +88,7 @@ class TgtgService {
                 // request every item
                 service.requestWithDelay(itemIds, resp.access_token, callback);
             } else {
-                console.log('checkItem#apiRefresh: Failed');
+                console.log('checkItem#apiRefresh: Failed ');
             }
         };
         this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
@@ -99,8 +114,22 @@ class TgtgService {
 
         const apiCallback = function (resp, err) {
 
+            // forward error
+            if (!Object.prototype.hasOwnProperty.call(resp, 'access_token')) {
+                err = `${JSON.stringify(resp)}`;
+
+                if (service.errorOccured) {
+                    // repeated error: wait for dev fix
+                } else {
+                    service.errorOccured = true;
+                    service.updateTokenOnDemand(callback, refreshToken, userId);
+                }
+
+            }
+
             if (err==null) {
                 // estimate expire date (1 days buffer)
+                service.errorOccured = false;
                 service.tokenExpireDate = Math.floor(Date.now() / 1000) + resp.access_token_ttl_seconds - (60*60*24);
                 service.cachedAccessToken = resp.access_token;
                 callback(resp, err);

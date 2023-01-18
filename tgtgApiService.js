@@ -25,11 +25,23 @@ class TgtgApiService {
         const PATH = '/api/auth/v3/token/refresh';
         console.log('#############################')
         console.log('refresh-Token: ' + refreshToken);
-        console.log('#############################')
-        this.postRequest(callback, PATH, { 
+        console.log('#############################');
+
+        let header =  { 
             'User-Agent': USER_AGENT, 
             'Content-Type': CONTENT_TYPE 
-        }, {
+        };
+
+        // add cookie for request
+        if (this.cookie !== undefined) {
+            header = { 
+                'User-Agent': USER_AGENT, 
+                'Content-Type': CONTENT_TYPE,
+                'Cookie':this.cookie
+            };
+        }
+        
+        this.postRequest(callback, PATH, header, {
             refresh_token: refreshToken,
             user_id: userId
         });
