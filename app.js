@@ -45,7 +45,8 @@ function pushItem(item) {
 
             const options = {
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                timeZone: 'Europe/Berlin'
             }
 
             const pickStart = startDate.toLocaleTimeString("de-DE", options);
@@ -126,11 +127,13 @@ function checkItemForPush (itemResp) {
 
 const task = new Task('simple task', () => {
 
-    // only check bwetween 6-22
+    // only check between 6-22
     const date = new Date();
 
-    // GMT+2
-    const hour = date.getUTCHours() + 1;
+    // Use local string instead of UTC for german time (winter and summer)
+    // const hour = date.getUTCHours() + 1;
+
+    const hour = date.toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' });
 
     if (hour > 6 && hour < 22) {
     
