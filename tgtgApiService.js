@@ -82,6 +82,53 @@ class TgtgApiService {
         }, body);
     }
 
+    createOrder(callback, itemId, itemCount, accessToken) {
+        const PATH = `/api/order/v7/create/${itemId}`;
+        this.postRequest(callback, PATH, {
+            'User-Agent': USER_AGENT,
+            'Content-Type': CONTENT_TYPE,
+            'Accept-Language': 'en-UK',
+            Authorization: `Bearer ${accessToken}`
+        }, {
+            item_count: itemCount
+        });
+    }
+
+    statusOrder(callback, orderId, accessToken) {
+        const PATH = `/api/order/v7/${orderId}/status`;
+        this.postRequest(callback, PATH, {
+            'User-Agent': USER_AGENT,
+            'Content-Type': CONTENT_TYPE,
+            'Accept-Language': 'en-UK',
+            Authorization: `Bearer ${accessToken}`
+        }, {
+        });
+    }
+
+    cancelOrder(callback, orderId, accessToken) {
+        const PATH = `/api/order/v7/${orderId}/abort`;
+        this.postRequest(callback, PATH, {
+            'User-Agent': USER_AGENT,
+            'Content-Type': CONTENT_TYPE,
+            'Accept-Language': 'en-UK',
+            Authorization: `Bearer ${accessToken}`
+        }, {
+            cancel_reason_id: 1
+        });
+    }
+
+    activeOrder(callback, userId, accessToken) {
+        const PATH = `/api/order/v6/active`;
+        this.postRequest(callback, PATH, {
+            'User-Agent': USER_AGENT,
+            'Content-Type': CONTENT_TYPE,
+            'Accept-Language': 'en-UK',
+            Authorization: `Bearer ${accessToken}`
+        }, {
+            user_id: userId
+        });
+    }
+
     postRequest(callback, path, headers, body) {
 
         const options = {

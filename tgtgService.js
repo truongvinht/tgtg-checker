@@ -81,6 +81,106 @@ class TgtgService {
         this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
     }
 
+    orderItem(itemId, count, callback) {
+        const service = this;
+        const apiCallback = function (resp, err) {
+            if (err == null) {
+                const orderCallback = (orderResp, orderErr) => {
+                    if (orderErr == null) {
+                        if (Object.prototype.hasOwnProperty.call(orderResp, 'order')) {
+                            callback(orderResp.order, null);
+                        } else {
+                            console.log('orderItem#createOrder: Bad Result ' + JSON.stringify(orderResp));
+                        }
+                    } else {
+                        callback(null, orderErr);
+                    }
+                };
+
+                service.apiService.createOrder(orderCallback, itemId, count, resp.access_token);
+            } else {
+                console.log('orderItem#apiRefresh: Failed');
+            }
+        };
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
+    }
+    orderStatusItem(orderId, callback) {
+        const service = this;
+        const apiCallback = function (resp, err) {
+            if (err == null) {
+                const orderCallback = (orderResp, orderErr) => {
+                    if (orderErr == null) {
+                        if (Object.prototype.hasOwnProperty.call(orderResp, 'items')) {
+                            for (const item of orderResp.items) {
+                                callback(item, null);
+                            }
+                        } else {
+                            console.log('orderStatusItem#statusOrder: Bad Result ' + JSON.stringify(orderResp));
+                        }
+                    } else {
+                        callback(null, orderErr);
+                    }
+                };
+
+                service.apiService.statusOrder(orderCallback, orderId, resp.access_token);
+            } else {
+                console.log('orderStatusItem#apiRefresh: Failed');
+            }
+        };
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
+    }
+
+    cancelItem(orderId, callback) {
+        const service = this;
+        const apiCallback = function (resp, err) {
+            if (err == null) {
+                const orderCallback = (orderResp, orderErr) => {
+                    if (orderErr == null) {
+                        if (Object.prototype.hasOwnProperty.call(orderResp, 'items')) {
+                            for (const item of orderResp.items) {
+                                callback(item, null);
+                            }
+                        } else {
+                            console.log('cancelItem#cancelOrder: Bad Result ' + JSON.stringify(orderResp));
+                        }
+                    } else {
+                        callback(null, orderErr);
+                    }
+                };
+
+                service.apiService.cancelOrder(orderCallback, orderId, resp.access_token);
+            } else {
+                console.log('cancelItem#apiRefresh: Failed');
+            }
+        };
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
+    }
+
+
+    activeOrder(callback) {
+        const service = this;
+        const apiCallback = function (resp, err) {
+            if (err == null) {
+                const orderCallback = (orderResp, orderErr) => {
+                    if (orderErr == null) {
+                        if (Object.prototype.hasOwnProperty.call(orderResp, 'orders')) {
+                            callback(orderResp.orders, null);
+                        } else {
+                            console.log('activeOrder#activeOrder: Bad Result ' + JSON.stringify(orderResp));
+                        }
+                    } else {
+                        callback(null, orderErr);
+                    }
+                };
+
+                service.apiService.activeOrder(orderCallback, service.userId, resp.access_token);
+            } else {
+                console.log('activeOrder#apiRefresh: Failed');
+            }
+        };
+        this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
+    }
+
     checkItems(itemIds, callback) {
         const service = this;
         const apiCallback = function (resp, err) {
