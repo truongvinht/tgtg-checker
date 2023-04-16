@@ -16,6 +16,10 @@ class ApiPushService {
      * @param {*} token token for push service
      */
     constructor (user, token) {
+
+        this.user = user;
+        this.token = token;
+
         const parameter = {
             user: user,
             token: token,
@@ -34,6 +38,12 @@ class ApiPushService {
      * @param {requestCallback} callback callback to handle result/error
      */
     pushNotification (title, message, callback) {
+
+        if (this.user == undefined || this.token == undefined) {
+            console.log(`# # # # #\n${title} - ${message}\n# # # # #`);
+            return;
+        }
+
         const msg = {
             message: message,
             title: title,

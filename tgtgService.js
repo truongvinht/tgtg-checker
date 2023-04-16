@@ -6,6 +6,7 @@ const ApiService = require('./tgtgApiService');
 
 // 8 seconds
 const DELAY = 8000;
+const RESERVE_DELAY = 30 * 1000;
 
 class TgtgService {
     /**
@@ -130,25 +131,11 @@ class TgtgService {
         this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
     }
 
-    cancelItem(orderId, callback) {
+    cancelItem(orderId) {
         const service = this;
         const apiCallback = function (resp, err) {
             if (err == null) {
-                const orderCallback = (orderResp, orderErr) => {
-                    if (orderErr == null) {
-                        if (Object.prototype.hasOwnProperty.call(orderResp, 'items')) {
-                            for (const item of orderResp.items) {
-                                callback(item, null);
-                            }
-                        } else {
-                            console.log('cancelItem#cancelOrder: Bad Result ' + JSON.stringify(orderResp));
-                        }
-                    } else {
-                        callback(null, orderErr);
-                    }
-                };
-
-                service.apiService.cancelOrder(orderCallback, orderId, resp.access_token);
+                service.cancelWithDelay(service.apiService, orderId, resp.access_token);    
             } else {
                 console.log('cancelItem#apiRefresh: Failed');
             }
@@ -265,6 +252,11 @@ class TgtgService {
             // x sec delay
             await new Promise(resolve => setTimeout(resolve, DELAY));
         }
+    }
+
+    async cancelWithDelay (service, orderId, access_token) {
+        await new Promise(resolve => setTimeout(resolve, RESERVE_DELAY));
+        service.cancelOrder(orderId, access_token);
     }
     
 }

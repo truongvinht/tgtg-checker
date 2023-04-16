@@ -11,11 +11,15 @@ const TgtgService = require('./tgtgService');
 const tgtg = new TgtgService(process.env.TGTG_REFRESH_TOKEN,process.env.TGTG_User);
 
 const PushService = require('./pushService');
+const ReserveService = require('./reserveService');
 
+const RESERVE_ITEMS = process.env.RESERVE_ITEMS || [];
+const reserver = new ReserveService(RESERVE_ITEMS);
 
 let reqMap = {};
 let didNotifyError = false;
 let pushService = null;
+
 
 function getPushService () {
     if (pushService == null) {
@@ -67,7 +71,24 @@ function pushItem(item) {
             }
         }
     }
-    //console.log(`Anzahl: ${item.items_available} ${rating} \n${pickupTime}`);
+
+    const count = reserver.checkReserve(item);
+    if (count > 0) {
+        getPushService().pushNotification(item.display_name, `Reservierte Anzahl: ${count} [${item.items_available}] \n${pickupTime}`, pushCallback);
+        
+        const reserveCallback = function (order, err) {
+            if (err == null) {
+                tgtg.cancelItem(order.id);
+            } else {
+                console.log(JSON.stringify(err));
+            }
+        };
+
+        // reserve
+        tgtg.orderItem(`${item.item.item_id}`,count,reserveCallback);
+        return;
+    }
+
     getPushService().pushNotification(item.display_name, `Anzahl: ${item.items_available} ${rating} \n${pickupTime}`, pushCallback);
 }
 
@@ -160,10 +181,12 @@ const task = new Task('simple task', () => {
             
             tgtg.checkfavorites(callback);
         }
+    } else if (hour > 22) {
+        // after 10 pm reset checks
+        reqMap = {};
+        reserver.reset();
     }
 });
-
-
 
 const job1 = new SimpleIntervalJob(
     { seconds: process.env.REQ_TIMER, runImmediately: true },

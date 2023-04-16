@@ -105,8 +105,11 @@ class TgtgApiService {
         });
     }
 
-    cancelOrder(callback, orderId, accessToken) {
+    cancelOrder(orderId, accessToken) {
         const PATH = `/api/order/v7/${orderId}/abort`;
+
+        const callback =  function (resp,err){};
+
         this.postRequest(callback, PATH, {
             'User-Agent': USER_AGENT,
             'Content-Type': CONTENT_TYPE,
