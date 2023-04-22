@@ -34,11 +34,13 @@ class ReserveService {
 
         if (!this.itemIds.includes(`${item.item.item_id}`)) {
             // ignore this item
+            console.log('Ignore: ' + item.item.item_id);
             return -1;
         }
 
         // check whether item was already reserved
         if (!this.usedList.includes(`${item.item.item_id}`)) {
+            console.log(`${new Date().toLocaleString("de-DE")}| ${item.item.item_id}: Reserving ${item.display_name}.`);
             this.usedList.push(`${item.item.item_id}`);
 
             if (item.items_available > MAX_ITEMS) {
@@ -48,6 +50,8 @@ class ReserveService {
             }
         } else {
             // already reserved
+            console.log(`${new Date().toLocaleString("de-DE")}| ${item.item.item_id}: Already reserved today.`);
+            
             return -1;
         }
     }

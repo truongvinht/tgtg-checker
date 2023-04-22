@@ -129,8 +129,10 @@ function checkItemForPush (itemResp) {
 
     if (Object.prototype.hasOwnProperty.call(reqMap, response.item.item_id)) {
         if (response.items_available > 0 && reqMap[response.item.item_id] < response.items_available) {
+            // new items added
             pushItem(response);
         } else {
+            // no changes
             console.log(`${new Date().toLocaleString("de-DE")}| ${response.item.item_id}: ${response.display_name} - Count ${response.items_available}`);
         }
     } else {
@@ -183,7 +185,6 @@ const task = new Task('simple task', () => {
         }
     } else if (hour > 22) {
         // after 10 pm reset checks
-        reqMap = {};
         reserver.reset();
     }
 });
