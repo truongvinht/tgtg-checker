@@ -12,6 +12,7 @@ class ReserveService {
      * @param {array} itemIds - list of item ids
      */
     constructor(itemIds) {
+        console.log('Reserving: ' + itemIds);
         this.itemIds = itemIds;
         this.usedList = [];
         this.orderList = [];
