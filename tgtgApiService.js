@@ -5,8 +5,9 @@
 // import
 const request = require('request');
 
-const USER_AGENT = 'TGTG/{} Dalvik/2.1.0 (Linux; U; Android 10; SM-G935F Build/NRD90M)';
+const USER_AGENT = 'TGTG/23.5.1 Dalvik/2.1.0 (Linux; U; Android 9; Nexus 5 Build/M4B30Z)';
 const CONTENT_TYPE = 'application/json';
+const API_ITEM_ENDPOINT = 'item/v8/';
 
 /**
  * Service to acccess Restful API for TooGoodToGo.
@@ -39,6 +40,8 @@ class TgtgApiService {
                 'Content-Type': CONTENT_TYPE,
                 'Cookie':this.cookie
             };
+        } else {
+            console.log('Cookie undefined...');
         }
         
         this.postRequest(callback, PATH, header, {
@@ -48,7 +51,7 @@ class TgtgApiService {
     }
 
     getItem(callback, itemId, accessToken, userId) {
-        const PATH = `/api/item/v7/${itemId}`;
+        const PATH = `/api/${API_ITEM_ENDPOINT}${itemId}`;
         this.postRequest(callback, PATH, {
             'User-Agent': USER_AGENT,
             'Content-Type': CONTENT_TYPE,
@@ -62,7 +65,7 @@ class TgtgApiService {
 
     // not working yet
     favorites(callback, accessToken, userId) {
-        const PATH = '/api/item/v7/';
+        const PATH = `/api/${API_ITEM_ENDPOINT}`;
 
         const body = {
             favorites_only: true,
@@ -150,6 +153,8 @@ class TgtgApiService {
 
             // look for cookie, and store it
             if(Object.prototype.hasOwnProperty.call(response.headers, 'set-cookie')) {
+               
+                // cookie is set
                 if (response.headers['set-cookie'].length > 0) {
                     api.cookie = response.headers['set-cookie'][0];
                 }
