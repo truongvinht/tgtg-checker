@@ -16,6 +16,9 @@ const ReserveService = require('./reserveService');
 const RESERVE_ITEMS = process.env.RESERVE_ITEMS || [];
 const reserver = new ReserveService(RESERVE_ITEMS);
 
+const ExternalService = require('./externalService');
+const exService = new ExternalService();
+
 let reqMap = {};
 let didNotifyError = false;
 let pushService = null;
@@ -150,44 +153,80 @@ function checkItemForPush (itemResp) {
 
 const task = new Task('simple task', () => {
 
-    // only check between 6-22
-    const date = new Date();
+    // check whether external source can be accessed
+    const exCallback = function (body, resp, err) {
+        // external service not configured
+        const date = new Date();
+        const hour = parseInt(date.toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' }));
+        
+        if (body === undefined && resp === undefined && err === undefined) {
+            // only check between 6-22
 
-    // Use local string instead of UTC for german time (winter and summer)
-    // const hour = date.getUTCHours() + 1;
-
-    const hour = date.toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' });
-
-    if (hour > 6 && hour < 22) {
-    
-        const LIST = JSON.parse(process.env.ITEMS);
-        if (LIST.length > 0) {
-            const callback = function (item, err) {
-                if (err == null) {
-                    checkItemForPush(item);
-                } else {
-                    console.log('bad request ' + err)
-                }
-            };
-            // check item
-            tgtg.checkItems(LIST,callback);
-        } else {
-            // req all items from favorites
-            const callback = function (favItem, err) {
-                if (err == null) {
-                    checkItemForPush(favItem);
-                } else {
-                    console.log(JSON.stringify(err));
-                }
+            if (hour > 6 && hour < 22) {
+                triggerCheckItems()
+                
+            } else if (hour > 22) {
+                // after 10 pm reset checks
+                reserver.reset();
             }
-            
-            tgtg.checkfavorites(callback);
+        } else {
+            // body data
+            // _id: string;
+            // enabled: number;
+            // start: string;
+            // end: string;
+            // startHour: number;
+            // endHour: number;
+            if (Object.prototype.hasOwnProperty.call(body, 'enabled')) {
+                if (body.enabled === 1) {
+                    // only check between start and end
+
+                    if (hour > body.startHour && hour < body.endHour) {
+                        triggerCheckItems()
+                        
+                    } else if (hour > body.endHour) {
+                        // after 10 pm reset checks
+                        reserver.reset();
+                    }
+                } else {
+                    // disabled checking
+                }
+            } else {
+                console.log('External data could not processed');
+            }
         }
-    } else if (hour > 22) {
-        // after 10 pm reset checks
-        reserver.reset();
     }
+
+    exService.getTgNotification(exCallback);
+
+
 });
+
+function triggerCheckItems() {
+    const LIST = JSON.parse(process.env.ITEMS);
+    if (LIST.length > 0) {
+        const callback = function (item, err) {
+            if (err == null) {
+                checkItemForPush(item);
+            } else {
+                console.log('bad request ' + err)
+            }
+        };
+        // check item
+        tgtg.checkItems(LIST,callback);
+    } else {
+        // req all items from favorites
+        const callback = function (favItem, err) {
+            if (err == null) {
+                checkItemForPush(favItem);
+            } else {
+                console.log(JSON.stringify(err));
+            }
+        }
+        
+        tgtg.checkfavorites(callback);
+    }
+}
 
 const job1 = new SimpleIntervalJob(
     { seconds: process.env.REQ_TIMER, runImmediately: true },

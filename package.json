@@ -14,9 +14,6 @@
   "keywords": [
     "tgtg"
   ],
-  "engines": {
-    "node": "16.x"
-  },
   "author": "Truong Vinh Tran",
   "license": "MIT",
   "bugs": {
