@@ -11,7 +11,12 @@ In order to run the tgtg service, following env are required.
 | PO_USER | xxxxxxxxxxx | user id for Pushover service |
 | PO_TOKEN | zzzzzzzzzzz | token for Pushover service |
 | REQ_TIMER | 60 | Repeat requesting every 60 seconds |
-| ITEMS | ["298070","123456"] | List of item id which will be checked, if list is empty favorites will be used |
+| ITEMS | ["298070","123456"] | List of item id which will be checked, if list is empty tgtg favorites will be used |
+| RESERVE_ITEMS | ["298070","123456"] | List of item id which will be ordered and canceled (blocked) |
+| RESERVE_ITEMS_MAXCOUNT | 5 | (max) Number of orders for each items |
+| RESERVE_DURATION | 30000 | Reservation duration in milli seconds |
+| EXTERNAL_SERVICE_BASE_URL | http://YOURSERVICE | external service for further integration |
+| EXETERNAL_SERVICE_TOKEN | TOKEN | Token for external service |
 
 ## Hint
 Too frequent access of the api might getting banned. So try to keep it low (e.g. 1 req per 8 seconds). 
