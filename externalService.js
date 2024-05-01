@@ -70,7 +70,6 @@ class ExternalService {
     };
 
     request(options, function (error, response, body) {
-      if (error) throw new Error(error);
       callback(body, response, error);
     });
   }
@@ -92,7 +91,6 @@ class ExternalService {
     };
 
     request(options, function (error, response, body) {
-      if (error) throw new Error(error);
       callback(body, response, error);
     });
   }

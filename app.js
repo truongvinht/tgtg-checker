@@ -75,8 +75,12 @@ function pushItem(item) {
         }
     }
 
+    // fetch number of reserving items & prevent double ordering
     const count = reserver.checkReserve(item);
+
     if (count > 0) {
+
+        // notify user about reserving
         getPushService().pushNotification(item.display_name, `Reservierte Anzahl: ${count} [${item.items_available}] \n${pickupTime}`, pushCallback);
         
         const reserveCallback = function (order, err) {
@@ -158,8 +162,8 @@ const task = new Task('simple task', () => {
         // external service not configured
         const date = new Date();
         const hour = parseInt(date.toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' }));
-        
-        if (body === undefined && resp === undefined && err === undefined) {
+        console.log('check server time')
+        if (body === undefined && resp === undefined && err === undefined || err !== undefined) {
             // only check between 6-22
 
             if (hour > 6 && hour < 22) {
@@ -170,6 +174,8 @@ const task = new Task('simple task', () => {
                 reserver.reset();
             }
         } else {
+            // use time settings from external service
+
             // body data
             // _id: string;
             // enabled: number;
@@ -196,10 +202,7 @@ const task = new Task('simple task', () => {
             }
         }
     }
-
     exService.getTgNotification(exCallback);
-
-
 });
 
 function triggerCheckItems() {

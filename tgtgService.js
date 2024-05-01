@@ -8,7 +8,7 @@ const ExternalService = require("./externalService");
 
 // 8 seconds
 const DELAY = 8000;
-const RESERVE_DELAY = 30 * 1000;
+const RESERVE_DELAY = process.env.RESERVE_DURATION || 30 * 1000; // default 30 secs
 
 class TgtgService {
   /**

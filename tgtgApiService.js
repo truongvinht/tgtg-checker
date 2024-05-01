@@ -136,7 +136,6 @@ class TgtgApiService {
     }
 
     postRequest(callback, path, headers, body) {
-
         const options = {
             method: 'POST',
             url: `${this.url}${path}`,
@@ -149,7 +148,6 @@ class TgtgApiService {
 
         request(options, function (error, response, body) {
             if (error) throw new Error(error);
-            //console.log(JSON.stringify(response))
 
             // look for cookie, and store it
             if(Object.prototype.hasOwnProperty.call(response.headers, 'set-cookie')) {

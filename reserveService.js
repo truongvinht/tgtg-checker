@@ -3,7 +3,7 @@
 // ==================
 
 // maximal number of reserving items
-const MAX_ITEMS = 5;
+const MAX_ITEMS = process.env.RESERVE_ITEMS_MAXCOUNT || 3;
 
 class ReserveService {
     /**
@@ -32,7 +32,6 @@ class ReserveService {
     }
 
     checkReserve(item) {
-
         if (!this.itemIds.includes(`${item.item.item_id}`)) {
             // ignore this item
             console.log('Ignore: ' + item.item.item_id);
@@ -52,7 +51,6 @@ class ReserveService {
         } else {
             // already reserved
             console.log(`${new Date().toLocaleString("de-DE")}| ${item.item.item_id}: Already reserved today.`);
-            
             return -1;
         }
     }
