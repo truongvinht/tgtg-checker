@@ -163,7 +163,7 @@ const task = new Task('simple task', () => {
         const date = new Date();
         const hour = parseInt(date.toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' }));
         console.log('check server time')
-        if (body === undefined && resp === undefined && err === undefined || err !== undefined) {
+        if (body === undefined && resp === undefined && err === undefined || (err !== undefined && err !== null)) {
             // only check between 6-22
 
             if (hour > 6 && hour < 22) {
