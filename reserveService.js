@@ -3,7 +3,7 @@
 // ==================
 
 // maximal number of reserving items
-const MAX_ITEMS = process.env.RESERVE_ITEMS_MAXCOUNT || 3;
+const MAX_ITEMS = process.env.RESERVE_ITEMS_MAXCOUNT || 5;
 
 class ReserveService {
     /**

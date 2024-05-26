@@ -23,6 +23,16 @@ let reqMap = {};
 let didNotifyError = false;
 let pushService = null;
 
+// launch notification
+const ENABLE_NOTIFICATION_ANNOUNCEMENT = process.env.PO_ANNOUNCE || '0'; 
+let notificationOnAnnounced = false;
+let notificationOffAnnounced = false;
+let notificatonLastStatusIsEnabled = false;
+
+// default request cycle
+const REQUEST_TIMER = process.env.REQ_TIMER || 60; 
+
+console.log(REQUEST_TIMER)
 
 function getPushService () {
     if (pushService == null) {
@@ -167,7 +177,7 @@ const task = new Task('simple task', () => {
             // only check between 6-22
 
             if (hour > 6 && hour < 22) {
-                triggerCheckItems()
+                // triggerCheckItems()
                 
             } else if (hour > 22) {
                 // after 10 pm reset checks
@@ -184,19 +194,45 @@ const task = new Task('simple task', () => {
             // startHour: number;
             // endHour: number;
             if (Object.prototype.hasOwnProperty.call(body, 'enabled')) {
+
                 if (body.enabled === 1) {
+
+                    if (ENABLE_NOTIFICATION_ANNOUNCEMENT === '1' && !notificationOnAnnounced) {
+                        if (!notificatonLastStatusIsEnabled) {
+                            notificationOnAnnounced = true;
+                            notificationOffAnnounced = false;
+                            // enabled=false => enabled=true
+                            getPushService().pushNotificationWithPriority('Information', 'tgtg-checker ON', -1, (err, result) => {});
+                        }
+                    } 
+
+
                     // only check between start and end
 
                     if (hour > body.startHour && hour < body.endHour) {
-                        triggerCheckItems()
+                        //triggerCheckItems()
                         
                     } else if (hour > body.endHour) {
                         // after 10 pm reset checks
                         reserver.reset();
                     }
+
                 } else {
                     // disabled checking
+                    if (ENABLE_NOTIFICATION_ANNOUNCEMENT === '1' && !notificationOffAnnounced) {
+                        if (!notificatonLastStatusIsEnabled) {
+                            notificationOffAnnounced = true;
+                            notificationOnAnnounced = false;
+                            // enabled=false => enabled=true
+                            getPushService().pushNotificationWithPriority('Information', 'tgtg-checker OFF', -1,  (err, result) => {});
+                        }
+                    }
                 }
+                
+                // update last status
+                notificatonLastStatusIsEnabled = body.enabled === 1;
+
+                
             } else {
                 console.log('External data could not processed');
             }
@@ -232,7 +268,7 @@ function triggerCheckItems() {
 }
 
 const job1 = new SimpleIntervalJob(
-    { seconds: process.env.REQ_TIMER, runImmediately: true },
+    { seconds: REQUEST_TIMER, runImmediately: true },
     task,
     'id_1'
 );

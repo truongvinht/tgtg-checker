@@ -38,6 +38,18 @@ class ApiPushService {
      * @param {requestCallback} callback callback to handle result/error
      */
     pushNotification (title, message, callback) {
+        // default 0: normal notification
+        this.pushNotificationWithPriority(title, message, 0, callback);
+    }
+
+    /**
+     * Push given message and title
+     * @param {string} title notification title
+     * @param {string} message input message
+     * @param {number} priority notification priority (-2,-1,0,1,2)
+     * @param {requestCallback} callback callback to handle result/error
+     */
+    pushNotificationWithPriority (title, message, priority, callback) {
 
         if (this.user == undefined || this.token == undefined) {
             console.log(`# # # # #\n${title} - ${message}\n# # # # #`);
@@ -48,7 +60,7 @@ class ApiPushService {
             message: message,
             title: title,
             sound: 'magic',
-            priority: 0
+            priority: priority
         };
 
         this.push.send(msg, callback);
