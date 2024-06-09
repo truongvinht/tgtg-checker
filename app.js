@@ -172,12 +172,11 @@ const task = new Task('simple task', () => {
         // external service not configured
         const date = new Date();
         const hour = parseInt(date.toLocaleString('en-GB', {hour: '2-digit',   hour12: false, timeZone: 'Europe/Berlin' }));
-        console.log('check server time')
         if (body === undefined && resp === undefined && err === undefined || (err !== undefined && err !== null)) {
             // only check between 6-22
 
             if (hour > 6 && hour < 22) {
-                // triggerCheckItems()
+                triggerCheckItems()
                 
             } else if (hour > 22) {
                 // after 10 pm reset checks
@@ -210,7 +209,7 @@ const task = new Task('simple task', () => {
                     // only check between start and end
 
                     if (hour > body.startHour && hour < body.endHour) {
-                        //triggerCheckItems()
+                        triggerCheckItems()
                         
                     } else if (hour > body.endHour) {
                         // after 10 pm reset checks
