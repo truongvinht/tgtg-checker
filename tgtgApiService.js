@@ -5,7 +5,7 @@
 // import
 const request = require('request');
 
-const USER_AGENT = 'TGTG/23.5.1 Dalvik/2.1.0 (Linux; U; Android 9; Nexus 5 Build/M4B30Z)';
+const USER_AGENT = 'TGTG/24.7.2 Dalvik/2.1.0 (Linux; U; Android 9; Nexus 5 Build/M4B30Z)';
 const CONTENT_TYPE = 'application/json';
 const API_ITEM_ENDPOINT = 'item/v8/';
 
@@ -38,10 +38,10 @@ class TgtgApiService {
             header = { 
                 'User-Agent': USER_AGENT, 
                 'Content-Type': CONTENT_TYPE,
-                'Cookie':this.cookie
+                'Set-Cookie':this.cookie
             };
         } else {
-            console.log('Cookie undefined...');
+            console.log('TgtgApiService#apiRefresh: Cookie undefined...');
         }
         
         this.postRequest(callback, PATH, header, {
@@ -65,6 +65,7 @@ class TgtgApiService {
 
     // not working yet
     favorites(callback, accessToken, userId) {
+        console.debug('TgtgApiService#favorites')
         const PATH = `/api/${API_ITEM_ENDPOINT}`;
 
         const body = {
@@ -80,6 +81,7 @@ class TgtgApiService {
 
         this.postRequest(callback, PATH, {
             'user-agent': USER_AGENT,
+            'Set-Cookie':this.cookie,
             'Cookie':this.cookie,
             Authorization: `Bearer ${accessToken}`
         }, body);
@@ -135,6 +137,10 @@ class TgtgApiService {
         });
     }
 
+    extractCookie(cookieHeader) {
+        return cookieHeader.split(';')[0]; // Get the first part before the semicolon
+    }
+
     postRequest(callback, path, headers, body) {
         const options = {
             method: 'POST',
@@ -154,7 +160,9 @@ class TgtgApiService {
                
                 // cookie is set
                 if (response.headers['set-cookie'].length > 0) {
-                    api.cookie = response.headers['set-cookie'][0];
+                    const newCookie = api.extractCookie(response.headers['set-cookie'][0]);
+                    api.cookie = newCookie;
+                    console.debug('TgtgApiService#postRequest: Updated Cookie', newCookie);
                 }
             }
 
