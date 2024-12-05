@@ -197,8 +197,10 @@ function checkItemForPush(itemResp) {
       if (
         reqMap[response.item.item_id].item_card_type === "DYNAMIC_PRICE" &&
         reqMap[response.item.item_id].item_price >
-          response.item.item_price.minor_units
+          response.item.item_price.minor_units &&
+        response.items_available > 0
       ) {
+        // push for price decrease and items are available
         pushItem(response);
       } else {
         // no changes
