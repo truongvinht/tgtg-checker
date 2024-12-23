@@ -60,6 +60,8 @@ class TgtgApiService {
         "User-Agent": USER_AGENT,
         "Content-Type": CONTENT_TYPE,
         "Accept-Language": "en-UK",
+        "Set-Cookie": this.cookie,
+        Cookie: this.cookie,
         Authorization: `Bearer ${accessToken}`,
       },
       {
