@@ -24,7 +24,7 @@ class TgtgApiService {
   }
 
   apiRefresh(callback, refreshToken, userId) {
-    const PATH = "/api/auth/v4/token/refresh";
+    const PATH = "/api/token/v1/refresh";
     console.log("#############################");
     console.log("refresh-Token: " + refreshToken);
     console.log("#############################");
