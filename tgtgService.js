@@ -39,7 +39,7 @@ class TgtgService {
       if (err == null) {
         callback(resp, err);
       } else {
-        console.log("updateTokenOnDemand#apiRefresh: Failed");
+        console.log("updateTokenOnDemand#apiRefresh: Failed", err);
       }
     };
     this.updateTokenOnDemand(apiCallback, this.refreshToken, this.userId);
@@ -292,6 +292,7 @@ class TgtgService {
           resp.access_token_ttl_seconds -
           60 * 60 * 24;
         service.cachedAccessToken = resp.access_token;
+        console.log("fetched Refresh Token:" + resp.refresh_token);
         callback(resp, err);
       } else {
         // req failed

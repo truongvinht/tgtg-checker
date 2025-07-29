@@ -369,11 +369,153 @@ function triggerCheckItems() {
   }
 }
 
+// check task for cleanup operations
+const checkTask = new Task("check task", () => {
+  // check external service configuration before running maintenance
+  const maintenanceCallback = function (body, _, err) {
+    // reset reservation service
+    reserver.reset();
+
+    // reset error notification flag
+    didNotifyError = false;
+    const date = new Date();
+    const hour = parseInt(
+      date.toLocaleString("en-GB", {
+        hour: "2-digit",
+        hour12: false,
+        timeZone: "Europe/Berlin",
+      })
+    );
+    // if external service is configured, respect its settings
+    if (body && !err) {
+      if (Object.prototype.hasOwnProperty.call(body, "reminder")) {
+        if ((hour > 8 && hour < 9) || true) {
+          // check between 8 and 9 oclock for price change
+          const priceReminderCallback = function (body, _, err) {
+            if (!err && body && Array.isArray(body) && body.length > 0) {
+              body.forEach((item, index) => {
+                if (Object.prototype.hasOwnProperty.call(item, "title")) {
+                  const searchingTitle = item.title;
+                  const itemId = item._id;
+
+                  const productCallback = function (
+                    productBody,
+                    _,
+                    productErr
+                  ) {
+                    if (
+                      !productErr &&
+                      productBody &&
+                      Object.prototype.hasOwnProperty.call(
+                        productBody,
+                        "results"
+                      )
+                    ) {
+                      if (productBody.results.length > 0) {
+                        // filter out excluded industry IDs
+                        const excludedIndustryIds = [1003, 1024, 1027, 1011];
+                        const filteredResults = productBody.results.filter(
+                          (product) => {
+                            if (
+                              product.brand &&
+                              Object.prototype.hasOwnProperty.call(
+                                product.brand,
+                                "industryId"
+                              )
+                            ) {
+                              return !excludedIndustryIds.includes(
+                                product.brand.industryId
+                              );
+                            }
+                            // keep products without industryId
+                            return true;
+                          }
+                        );
+
+                        if (filteredResults.length > 0) {
+                          // process filtered results here
+
+                          const unsortedObjects = filteredResults;
+                          const priceSortedObjects = unsortedObjects.sort(
+                            (a, b) => {
+                              if (
+                                a.referencePrice === null &&
+                                b.referencePrice === null
+                              ) {
+                                return 0; // If both are null, consider them equal
+                              }
+                              if (a.referencePrice === null) {
+                                return 1; // If a is null, move it to the end
+                              }
+                              if (b.referencePrice === null) {
+                                return -1; // If b is null, move it to the end
+                              }
+                              return a.referencePrice - b.referencePrice; // Compare floating-point numbers
+                            }
+                          );
+
+                          const unitSortedObjects = priceSortedObjects.sort(
+                            (a, b) =>
+                              a.unit.shortName.localeCompare(b.unit.shortName)
+                          );
+
+                          const firstItem = unitSortedObjects[0];
+                          const storeName = firstItem.advertisers[0].name;
+                          const currentPrice = firstItem.price;
+                          const startDate = firstItem.validityDates[0].from;
+                          const endDate = firstItem.validityDates[0].to;
+                          const itemName = firstItem.product.name;
+
+                          const data = {
+                            storeName,
+                            currentPrice,
+                            startDate,
+                            endDate,
+                            itemName,
+                          };
+
+                          const priceUpdateCallback = function (
+                            priceBody,
+                            _,
+                            priceErr
+                          ) {};
+                          exService.putPriceReminder(
+                            priceReminderCallback,
+                            itemId,
+                            data
+                          );
+                        }
+                      }
+                    }
+                  };
+
+                  exService.getProducts(productCallback, searchingTitle);
+                }
+              });
+            }
+          };
+
+          exService.getPriceReminders(priceReminderCallback);
+        }
+      }
+    }
+  };
+
+  exService.getTgNotification(maintenanceCallback);
+});
+
 const job1 = new SimpleIntervalJob(
   { seconds: REQUEST_TIMER, runImmediately: true },
   task,
   "id_1"
 );
 
+const job2 = new SimpleIntervalJob(
+  { hours: REQUEST_TIMER, runImmediately: true },
+  checkTask,
+  "id_2"
+);
+
 // create and start jobs
 scheduler.addSimpleIntervalJob(job1);
+scheduler.addSimpleIntervalJob(job2);
