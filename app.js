@@ -389,7 +389,7 @@ const checkTask = new Task("check task", () => {
     // if external service is configured, respect its settings
     if (body && !err) {
       if (Object.prototype.hasOwnProperty.call(body, "reminder")) {
-        if ((hour > 8 && hour < 9) || true) {
+        if (hour > 8 && hour < 9) {
           // check between 8 and 9 oclock for price change
           const priceReminderCallback = function (body, _, err) {
             if (!err && body && Array.isArray(body) && body.length > 0) {
@@ -464,7 +464,7 @@ const checkTask = new Task("check task", () => {
                           const currentPrice = firstItem.price;
                           const startDate = firstItem.validityDates[0].from;
                           const endDate = firstItem.validityDates[0].to;
-                          const itemName = firstItem.product.name;
+                          const itemName = `${firstItem.product.name} (${firstItem.referencePrice}/${firstItem.unit.shortName})`;
 
                           const data = {
                             storeName,
@@ -480,7 +480,7 @@ const checkTask = new Task("check task", () => {
                             priceErr
                           ) {};
                           exService.putPriceReminder(
-                            priceReminderCallback,
+                            priceUpdateCallback,
                             itemId,
                             data
                           );
